@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 
-MAINTAINER Norsk Nettarkiv
+MAINTAINER kinglf
 
 RUN apt-get update -qqy \
   && apt-get -qqy install libnss3 libnss3-tools libfontconfig1 wget ca-certificates apt-transport-https inotify-tools \
