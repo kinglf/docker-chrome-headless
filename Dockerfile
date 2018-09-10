@@ -3,7 +3,7 @@ FROM ubuntu:16.04
 MAINTAINER kinglf
 
 RUN apt-get update -qqy \
-  && apt-get -qqy install libnss3 libnss3-tools libfontconfig1 wget ca-certificates apt-transport-https inotify-tools language-pack-zh \
+  && apt-get -qqy install libnss3 libnss3-tools libfontconfig1 wget ca-certificates apt-transport-https inotify-tools apt-get install language-pack-zh-hans \
   && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 # Find the latest unstable version here: https://www.ubuntuupdates.org/google-chrome-unstable.
