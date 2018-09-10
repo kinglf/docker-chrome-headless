@@ -1,7 +1,6 @@
-# docker-chrome-headless-cn
 
-## Chrome headless zh-cn supported
-## Forked from nlnwa/docker-chrome-headless
+# Chrome headless zh-cn supported
+> Forked from nlnwa/docker-chrome-headless
 
 #### Changes:
 * apt-get install language-pack-zh-hans fonts-droid-fallback ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
