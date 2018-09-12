@@ -1,24 +1,28 @@
-FROM ubuntu:16.04
+FROM ubuntu:14.04
 
-MAINTAINER kinglf
+LABEL maintainer "Alpeware <info@alpeware.com>"
 
-RUN apt-get update -qqy \
-  && apt-get -qqy install libnss3 libxss1 libnss3-tools libfontconfig1 libappindicator1 libappindicator3-1 libindicator7 wget ca-certificates apt-transport-https inotify-tools language-pack-zh-hans fonts-droid-fallback ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming \
-  && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
-
-# Find the latest unstable version here: https://www.ubuntuupdates.org/google-chrome-unstable.
-ENV CHROME_VERSION=70.0.3538.9-1
-ENV LANG=zh_CN.UTF8
-ENV LANGUAGE=zh_CN:zh:en_US:en
-RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - 
-RUN echo "deb https://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
-RUN echo 
-RUN apt-get update -qqy
-RUN apt-get -qqy install google-chrome-unstable=${CHROME_VERSION}
-RUN rm /etc/apt/sources.list.d/google-chrome.list
-RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+ENV REV=590620
 
 EXPOSE 9222
+
+RUN apt-get update -qqy \
+  && apt-get -qqy install libnss3 libnss3-tools libfontconfig1 wget ca-certificates apt-transport-https inotify-tools unzip \
+  libpangocairo-1.0-0 libx11-xcb-dev libxcomposite-dev libxcursor1 libxdamage1 libxi6 libgconf-2-4 libxtst6 libcups2-dev \
+  libxss-dev libxrandr-dev libasound2-dev libatk1.0-dev libgtk-3-dev ttf-ancient-fonts chromium-codecs-ffmpeg-extra libappindicator3-1 \
+  && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+RUN apt-get install language-pack-zh-hans fonts-droid-fallback ttf-wqy-zenhei ttf-wqy-microhei fonts-arphic-ukai fonts-arphic-uming
+
+RUN wget https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64.deb \
+	&& dpkg -i dumb-init_*.deb \
+	&& rm dumb-init_1.2.0_amd64.deb
+
+RUN wget -q -O chrome.zip https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/$REV/chrome-linux.zip \
+  && unzip chrome.zip \
+  && rm chrome.zip \
+  && ln -s $PWD/chrome-linux/chrome /usr/bin/google-chrome-unstable
+
+RUN google-chrome-unstable --version
 
 ADD start.sh import_cert.sh /usr/bin/
 
@@ -26,5 +30,9 @@ RUN mkdir /data
 VOLUME /data
 ENV HOME=/data DEBUG_ADDRESS=0.0.0.0 DEBUG_PORT=9222
 
-CMD ["/usr/bin/start.sh"]
+ENV LANG=zh_CN.UTF8
+ENV LANGUAGE=zh_CN:zh:en_US:en
 
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+CMD ["/usr/bin/start.sh"]
